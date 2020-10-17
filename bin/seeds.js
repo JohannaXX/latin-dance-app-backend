@@ -1,0 +1,179 @@
+require('../config/db.config');
+const faker = require('faker');
+
+const User = require('../models/user.model');
+const Post = require('../models/post.model');
+const Comment = require('../models/comment.model');
+const Like = require('../models/like.model');
+const Match = require('../models/match.model');
+const Chat = require('../models/chat.model');
+const Message = require('../models/message.model');
+
+const userIds = [];
+
+const danceStyles = [ "salsa cubana", "salsa en linea", "bachata", "kizomba", "mambo", "merengue", "rumba"]
+
+Promise.all([
+  User.deleteMany(),
+  Post.deleteMany(),
+  Comment.deleteMany(),
+  Like.deleteMany(),
+  Match.deleteMany(),
+  Chat.deleteMany(),
+  Message.deleteMany()
+])
+  .then(() => {
+    for (let i = 0; i < 30; i++) {
+      const user = new User({
+        name: faker.name.findName(),
+        email: faker.internet.email(),
+        username: faker.internet.userName(),
+        password: '123123123',
+        avatar: faker.image.avatar(),
+        bio: faker.lorem.sentence(),
+        style: 'salsa cubana',
+        role: 'user',
+        validated: true,
+        createdAt: faker.date.past()
+      })
+
+      user.save()
+        .then(u => {
+
+          userIds.push(u._id)
+
+          for(let j = 0; j < 20; j++) {
+            const post = new Post({
+              user: u._id,
+              body: faker.lorem.paragraph(),
+              image: faker.random.image(),
+              createdAt: faker.date.past()
+            })
+
+            post.save()
+              .then((p) => {
+                for (let k = 0; k < 10; k++) {
+                  const c = new Comment({
+                    user: userIds[Math.floor(Math.random() * userIds.length)],
+                    post: p._id,
+                    text: faker.lorem.paragraph(),
+                    createdAt: faker.date.past()
+                  })
+
+                  c.save()
+                }
+              })
+              .catch(err => console.log(err))
+          }
+        })
+        .catch(err => console.log(err))
+    }
+  })
+  .then(() => {
+    const testProfile = new User({
+        name: 'Test',
+        email: 'test@test.com',
+        username: 'Test',
+        password: 'Test1234',
+        avatar: faker.image.avatar(),
+        bio: faker.lorem.sentence(),
+        style: 'salsa cubana',
+        role: 'user',
+        activation: { active: true },
+        createdAt: faker.date.past()
+    });
+
+    testProfile.save()
+        .then(user => {
+            console.log('Test profile: e-mail = test@test.com , password = Test1234');
+
+            for (let i = 0; i < 20; i++) {
+                const post = new Post({
+                    user: user._id,
+                    body: faker.lorem.text(),
+                    createdAt: faker.date.past()
+                });
+
+                post.save()
+                    .then(p => {
+                        for (let j = 0; Math.floor(Math.random() * 10); j++) {
+                            const comment = new Comment({
+                                text: faker.lorem.paragraph(),
+                                user: userIds[Math.floor(Math.random() * userIds.length)],
+                                post: p._id,
+                                createdAt: faker.date.past()
+                            });
+    
+                            comment.save();
+                        }
+    
+                        for (let k = 0; Math.floor(Math.random() * 50); k++) {
+                            const like = new Like({
+                                user: user._id,
+                                post: p._id,
+                                createdAt: faker.date.past()
+                            });
+    
+                            like.save();
+                        }   
+                    })
+            }
+
+            for (let i = 0; i < 10; i++) {
+                const match = new Match({
+                    users: [ userIds[i], user._id],
+                    status: 'accepted',
+                    requester: userIds[i],
+                    createdAt: faker.date.past()
+                })
+
+                match.save()
+
+                const chat = new Chat({
+                    members: [user._id, userIds[i]],
+                    createdAt: faker.date.past()
+                })
+
+                chat.save()
+
+                for (let j = 0; j < 20; j++) {
+                    const message = new Message({
+                        message: faker.lorem.paragraph(),
+                        sender: j % 2 === 0 ? user._id : userIds[i],
+                        chat: chat._id,
+                        status: 'read',
+                        createdAt: faker.date.past()
+                    })
+
+                    message.save()
+                }
+            }
+
+            for (let i = 10; i < 15; i++) {
+                const match = new Match({
+                    users: [ userIds[i], user._id],
+                    status: 'pending',
+                    requester: user._id,
+                    createdAt: faker.date.past()
+                })
+
+                match.save()
+            }
+
+            for (let i = 15; i < 20; i++) {
+                const match = new Match({
+                    users: [ userIds[i], user._id],
+                    status: 'pending',
+                    requester: userIds[i],
+                    createdAt: faker.date.past()
+                })
+
+                match.save()
+            }
+
+           
+
+        })
+
+  })
+  .catch(err => console.log(err))
