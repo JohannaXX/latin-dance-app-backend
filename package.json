@@ -1,0 +1,19 @@
+{
+  "name": "latin-dance-app-backend",
+  "version": "1.0.0",
+  "description": "social app to find dance partners",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohannaXX/latin-dance-app-backend.git"
+  },
+  "author": "Johanna",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JohannaXX/latin-dance-app-backend/issues"
+  },
+  "homepage": "https://github.com/JohannaXX/latin-dance-app-backend#readme"
+}
