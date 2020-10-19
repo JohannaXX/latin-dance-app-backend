@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('./message.model');
 
 const chatSchema = new mongoose.Schema(
     {
@@ -10,7 +11,11 @@ const chatSchema = new mongoose.Schema(
             }
         ]
     },
-    { timestamps: true }
+    { timestamps: true ,
+        toJSON: {
+          virtuals: true
+        }
+    }
 );
 
 chatSchema.virtual('messages', {

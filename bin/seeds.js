@@ -107,9 +107,9 @@ Promise.all([
                             comment.save();
                         }
     
-                        for (let k = 0; Math.floor(Math.random() * 50); k++) {
+                        for (let k = 0; k <= Math.floor(Math.random() * 10) ; k++) {
                             const like = new Like({
-                                user: user._id,
+                                user: userIds[Math.floor(Math.random() * userIds.length)],
                                 post: p._id,
                                 createdAt: faker.date.past()
                             });
@@ -141,7 +141,7 @@ Promise.all([
                         message: faker.lorem.paragraph(),
                         sender: j % 2 === 0 ? user._id : userIds[i],
                         chat: chat._id,
-                        status: 'read',
+                        status: 'unread',
                         createdAt: faker.date.past()
                     })
 
