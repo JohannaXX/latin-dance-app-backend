@@ -6,18 +6,15 @@ const chatController = require('../controllers/chat.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const upload = require('./cloudinary.config');
 
-// router.get('/signup', authMiddleware.isNotAuthenticated, userController.showSignup); 
 // router.get('/activate/:token', authMiddleware.isNotAuthenticated, userController.activateUser);
 // router.get('/auth/slack', authMiddleware.isNotAuthenticated, userController.loginWithSlack);
 // router.get('/auth/google', authMiddleware.isNotAuthenticated, userController.loginWithGmail);
 // router.get('/auth/google/callback', authMiddleware.isNotAuthenticated, userController.getLoginWithGmail);
-// router.get('/login', authMiddleware.isNotAuthenticated, userController.showLogin);
 router.post('/login', authMiddleware.isNotAuthenticated, userController.doLogin);
 router.post('/logout', authMiddleware.isAuthenticated, userController.logout);
 
 router.delete('/user/delete', authMiddleware.isAuthenticated, userController.delete);
 router.patch('/user/update', authMiddleware.isAuthenticated, userController.update);
-// router.get('/user/edit', authMiddleware.isAuthenticated, userController.edit);
 router.get('/user/:id', authMiddleware.isAuthenticated, userController.profile);
 router.post('/user', authMiddleware.isNotAuthenticated, upload.single('avatar'), userController.create);
 
@@ -29,7 +26,6 @@ router.post('/match', authMiddleware.isAuthenticated, userController.createMatch
 router.delete('/post/comment/:id/delete', authMiddleware.isAuthenticated, postController.deleteComment);
 router.post('/post/:id/comments', authMiddleware.isAuthenticated, postController.addComment);
 router.delete('/post/:id/delete', authMiddleware.isAuthenticated, postController.delete);
-// router.get('/post/:id/edit', authMiddleware.isAuthenticated, postController.edit);  do we need an endpoint to show the form?
 // router.post('/post/:id/like', authMiddleware.isAuthenticated, postController.like);
 router.patch('/post/:id/update', authMiddleware.isAuthenticated, postController.update);
 router.get('/post/:id', authMiddleware.isAuthenticated, postController.show);

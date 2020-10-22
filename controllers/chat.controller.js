@@ -5,8 +5,19 @@ const Message = require('../models/message.model');
 const Match = require('../models/match.model')
 
 module.exports.index = (req, res, next) => {
-    Chat.find({ 'members': { $in: [req.session.user.id] }}) 
+    const { limit } = req.query;
+
+    Chat.find({ 'members': { $in: [req.session.user.id] }}, null, {...(limit? {limit: Number(limit)} : {})}) 
         .populate({path: "members", match: {'_id': {$ne: req.session.user.id}}})
+        .populate({
+            path: 'messages',
+            options: {
+                limit: 2,
+                sort: { createdAt: -1},
+                skip: req.params.pageIndex*2
+            },
+            limit: 1
+        })
         .then( chats => {
 
             const userIdsWithActiveChats = [];
@@ -25,14 +36,15 @@ module.exports.index = (req, res, next) => {
 
 module.exports.show = (req, res, next) => {
     Chat.findById( req.params.id )
+        .populate({path: "members", match: {'_id': {$ne: req.session.user.id}}})
         .populate({
             path: 'messages',
             options: {
                 sort: {
                     createdAt: -1
                 }
-            },
-            populate: 'sender'
+            }/* ,
+            populate: 'sender' */
         })
         .then( chat => {
             if (!chat) {
