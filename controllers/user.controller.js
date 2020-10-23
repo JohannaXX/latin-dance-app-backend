@@ -117,6 +117,7 @@ module.exports.create = (req, res, next) => {
 
 module.exports.contacts = (req, res, next) => {
     Match.find({ 'users': { $in: [req.currentUser.id] } })
+        .populate({path: 'users', match: {'_id': {$ne: req.session.user.id}}})
         .then(matches => {
 
             const matchIds = matches.reduce((acc, cur) => {
@@ -127,7 +128,7 @@ module.exports.contacts = (req, res, next) => {
             User.find().where('_id').nin(matchIds)
                 .populate('matches')
                 .then(users => {
-                    res.status(200).json(users)
+                    res.status(200).json({matches, users})
                 })
                 .catch(next)
         })

@@ -27,7 +27,15 @@ module.exports.index = (req, res, next) => {
                 })
                 .populate('user')
                 .populate('likes')
-                .populate('comments')
+                .populate({
+                    path: 'comments',
+                    options: {
+                        sort: {
+                            createdAt: 1
+                        }
+                    },
+                    populate: 'user'
+                })
                 .then(posts => {
 
                     res.status(200).json(posts)
