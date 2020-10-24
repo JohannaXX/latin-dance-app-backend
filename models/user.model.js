@@ -37,10 +37,21 @@ const userSchema = new mongoose.Schema({
   bio: {
     type: String
   },
+  gallery: {
+    type: [ String ]
+  },
   style: {
-    type: String,
+    type: [ String ],
     enum: [ 'salsa cubana', 'salsa en linea', 'bachata', 'kizomba', 'mambo', 'merengue', 'rumba'],
     default: 'salsa cubana'
+  },
+  city: {
+    type: String,
+    required: true
+  },
+  country: {
+    type: String,
+    required: true
   },
   role: {
     type: String,

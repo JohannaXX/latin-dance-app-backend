@@ -31,7 +31,19 @@ Promise.all([
         password: '123123123',
         avatar: faker.image.avatar(),
         bio: faker.lorem.sentence(),
-        style: 'salsa cubana',
+        gallery: [ 
+          "https://picsum.photos/300/300",
+          "https://picsum.photos/400/300",
+          "https://picsum.photos/500/300",
+          "https://picsum.photos/400/400",
+          "https://picsum.photos/300/300",
+          "https://picsum.photos/400/300",
+          "https://picsum.photos/300/200",
+          "https://picsum.photos/400/400",
+        ],
+        style: [ 'salsa cubana', 'bachata' ],
+        city: faker.address.city(),
+        country: faker.address.countryCode(),
         role: 'user',
         validated: true,
         createdAt: faker.date.past()
@@ -77,7 +89,19 @@ Promise.all([
         password: 'Test1234',
         avatar: faker.image.avatar(),
         bio: faker.lorem.sentence(),
-        style: 'salsa cubana',
+        gallery: [ 
+          "https://picsum.photos/300/300",
+          "https://picsum.photos/400/300",
+          "https://picsum.photos/500/300",
+          "https://picsum.photos/400/400",
+          "https://picsum.photos/300/300",
+          "https://picsum.photos/400/300",
+          "https://picsum.photos/300/200",
+          "https://picsum.photos/400/400",
+        ],
+        style: [ 'salsa cubana', 'bachata' ],
+        city: faker.address.city(),
+        country: faker.address.countryCode(),
         role: 'user',
         activation: { active: true },
         createdAt: faker.date.past()
@@ -91,12 +115,13 @@ Promise.all([
                 const post = new Post({
                     user: user._id,
                     body: faker.lorem.text(),
+                    image: faker.image.nightlife(),
                     createdAt: faker.date.past()
                 });
 
                 post.save()
                     .then(p => {
-                        for (let j = 0; Math.floor(Math.random() * 10); j++) {
+                        for (let j = 0; Math.floor(Math.random() * 7); j++) {
                             const comment = new Comment({
                                 text: faker.lorem.paragraph(),
                                 user: userIds[Math.floor(Math.random() * userIds.length)],
