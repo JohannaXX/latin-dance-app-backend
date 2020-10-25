@@ -58,7 +58,7 @@ Promise.all([
             const post = new Post({
               user: u._id,
               body: faker.lorem.paragraph(),
-              image: faker.random.image(),
+              image: "https://picsum.photos/400/400",
               createdAt: faker.date.past()
             })
 
@@ -115,7 +115,7 @@ Promise.all([
                 const post = new Post({
                     user: user._id,
                     body: faker.lorem.text(),
-                    image: faker.image.nightlife(),
+                    image: "https://picsum.photos/400/400",
                     createdAt: faker.date.past()
                 });
 
@@ -183,6 +183,7 @@ Promise.all([
                 })
 
                 match.save()
+                  .catch(err => console.log(err))
             }
 
             for (let i = 15; i < 20; i++) {
@@ -194,6 +195,7 @@ Promise.all([
                 })
 
                 match.save()
+                  .catch(err => console.log(err))
             }
 
            
