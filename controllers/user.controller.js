@@ -85,8 +85,17 @@ module.exports.profile = (req, res, next) => {
                     createdAt: -1
                 }
             },
-            populate: ['comments', 'likes', 'user']
+            populate: ['likes', 'user']
         })
+        .populate({
+            path: 'posts',
+            populate: {
+              path: 'comments',
+              populate: {
+                path: 'user',
+              }
+            }
+          })
         .then( user => {
             if (!user) {
                 throw createError(404, 'user not found')
