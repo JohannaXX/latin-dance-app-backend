@@ -108,12 +108,12 @@ Promise.all([
     });
 
     testProfile.save()
-        .then(user => {
+        .then( testUser => {
             console.log('Test profile: e-mail = test@test.com , password = Test1234');
 
             for (let i = 0; i < 20; i++) {
                 const post = new Post({
-                    user: user._id,
+                    user: testUser._id,
                     body: faker.lorem.text(),
                     image: "https://picsum.photos/400/400",
                     createdAt: faker.date.past()
@@ -146,7 +146,7 @@ Promise.all([
 
             for (let i = 0; i < 10; i++) {
                 const match = new Match({
-                    users: [ userIds[i], user._id],
+                    users: [ userIds[i], testUser._id],
                     status: 'accepted',
                     requester: userIds[i],
                     createdAt: faker.date.past()
@@ -155,7 +155,7 @@ Promise.all([
                 match.save()
 
                 const chat = new Chat({
-                    members: [user._id, userIds[i]],
+                    members: [testUser._id, userIds[i]],
                     createdAt: faker.date.past()
                 })
 
@@ -164,7 +164,7 @@ Promise.all([
                 for (let j = 0; j < 20; j++) {
                     const message = new Message({
                         message: faker.lorem.paragraph(),
-                        sender: j % 2 === 0 ? user._id : userIds[i],
+                        sender: j % 2 === 0 ? testUser._id : userIds[i],
                         chat: chat._id,
                         status: 'unread',
                         createdAt: faker.date.past()
@@ -176,9 +176,9 @@ Promise.all([
 
             for (let i = 10; i < 15; i++) {
                 const match = new Match({
-                    users: [ userIds[i], user._id],
+                    users: [ userIds[i], testUser._id],
                     status: 'pending',
-                    requester: user._id,
+                    requester: testUser._id,
                     createdAt: faker.date.past()
                 })
 
@@ -188,7 +188,7 @@ Promise.all([
 
             for (let i = 15; i < 20; i++) {
                 const match = new Match({
-                    users: [ userIds[i], user._id],
+                    users: [ userIds[i], testUser._id],
                     status: 'pending',
                     requester: userIds[i],
                     createdAt: faker.date.past()

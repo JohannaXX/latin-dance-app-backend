@@ -115,7 +115,7 @@ module.exports.create = (req, res, next) => {
 }
 
 
-module.exports.contacts = (req, res, next) => {
+module.exports.network = (req, res, next) => {
     Match.find({ 'users': { $in: [req.currentUser.id] } })
         .populate({path: 'users', match: {'_id': {$ne: req.session.user.id}}})
         .then(matches => {
@@ -128,7 +128,7 @@ module.exports.contacts = (req, res, next) => {
             User.find().where('_id').nin(matchIds)
                 .populate('matches')
                 .then(users => {
-                    res.status(200).json({matches, users})
+                    res.status(200).json({users})
                 })
                 .catch(next)
         })
@@ -136,7 +136,7 @@ module.exports.contacts = (req, res, next) => {
 }
 
 
-module.exports.network = (req, res, next) => {
+module.exports.contacts = (req, res, next) => {
     Match.find({
         $or: [{
                 users: {
@@ -163,7 +163,7 @@ module.exports.network = (req, res, next) => {
         const users = matches.map(m => {
             return {
                 user: m.users.find(e => e._id.toString() !== req.currentUser.id.toString()),
-                showBtn: m.status === 'pending',
+                showAcceptBtn: m.status === 'pending',
                 match: m._id
             }
         })
@@ -175,13 +175,13 @@ module.exports.network = (req, res, next) => {
 
 module.exports.createMatch = (req, res, next) => {
     const match = new Match({
-        users: [req.session.user.id, req.body.contact],
+        users: [req.session.user.id, req.body.id],
         status: 'pending',
         requester: req.session.user.id
     })
     
     match.save()
-        .then( m => res.json(m))
+        .then( m => res.status(200).json(m))
         .catch(next)
 }
 
