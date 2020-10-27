@@ -132,22 +132,22 @@ module.exports.addComment = (req, res, next) => {
 
 
 module.exports.like = (req, res, next) => {
-
-    Like.find({
-        user: req.session.user.id, 
+    const params = {
+        user: req.session.user.id,
         post: req.params.id
-    })
+    };
+
+    Like.find(params)
         .then(like => {
-           //res.json(like)
-            Like.deleteMany({ user: req.session.user.id, function(err, res) {
+            /* Like.deleteMany({ user: req.session.user.id, function(err, res) {
                 if (err) {
                     console.log(err)
                 } else {
                     res.status(204).json()
                 }
-            } })
+            } }) */
 
-            /* if (!like) {
+            if (!like) {
                 const like = new Like(params)
 
                 like.save()
@@ -160,7 +160,7 @@ module.exports.like = (req, res, next) => {
                 Like.findByIdAndRemove(like._id)
                     .then(() => res.json({ likes: -1 }))
                     .catch(next)
-            } */
+            }
         })
         .catch(next)
 }
