@@ -139,26 +139,14 @@ module.exports.like = (req, res, next) => {
 
     Like.find(params)
         .then(like => {
-            /* Like.deleteMany({ user: req.session.user.id, function(err, res) {
-                if (err) {
-                    console.log(err)
-                } else {
-                    res.status(204).json()
-                }
-            } }) */
-
-            if (!like) {
+            if (like.length === 0) {
                 const like = new Like(params)
-
                 like.save()
-                    .then(l => {
-                        console.log(l)
-                        res.json({ likes: 1})
-                    })
+                    .then(() => res.status(201).json({ likes: 1}))
                     .catch(next)
             } else {
-                Like.findByIdAndRemove(like._id)
-                    .then(() => res.json({ likes: -1 }))
+                Like.deleteMany(params)
+                    .then(() => res.status(200).json({ likes: -1 }))
                     .catch(next)
             }
         })

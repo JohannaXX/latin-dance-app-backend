@@ -54,7 +54,7 @@ Promise.all([
 
           userIds.push(u._id)
 
-          for(let j = 0; j < 20; j++) {
+          for(let j = 0; j < 5; j++) {
             const post = new Post({
               user: u._id,
               body: faker.lorem.paragraph(),
@@ -64,7 +64,7 @@ Promise.all([
 
             post.save()
               .then((p) => {
-                for (let k = 0; k < 10; k++) {
+                for (let k = 0; k < 5; k++) {
                   const c = new Comment({
                     user: userIds[Math.floor(Math.random() * userIds.length)],
                     post: p._id,
@@ -73,6 +73,16 @@ Promise.all([
                   })
 
                   c.save()
+
+                  for (let k = 0; k <= Math.floor(Math.random() * 10) ; k++) {
+                    const like = new Like({
+                        user: userIds[Math.floor(Math.random() * userIds.length)],
+                        post: p._id,
+                        createdAt: faker.date.past()
+                    });
+
+                    like.save();
+                  }   
                 }
               })
               .catch(err => console.log(err))
