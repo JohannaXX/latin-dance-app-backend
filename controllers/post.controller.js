@@ -151,9 +151,6 @@ module.exports.updateComment = (req, res, next) => {
 
 
 module.exports.deleteComment = (req, res, next) => {
-    /* Comment.findByIdAndDelete( req.params.id )
-        .then(() => res.status(204).json()) 
-        .catch(next) */
 
     Comment.findById(req.params.id)
     .then( c => {
