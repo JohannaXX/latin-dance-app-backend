@@ -12,13 +12,8 @@ const storage = new CloudinaryStorage({
 	cloudinary: cloudinary,
 	params: {
 		folder: 'latindanceapp',
-		allowedFormats: ['jpg', 'png']
-			/* ,
-		filename: function (req, file, cb) {
-			cb(null, file.originalname); // The file on cloudinary would have the same name as the original file name
-		} */
+		allowedFormats: ['jpg', 'png']	
 	}
-	
 });
 
 const uploadCloud = multer({ storage: storage });

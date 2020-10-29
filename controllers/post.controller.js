@@ -60,7 +60,9 @@ module.exports.show = (req, res, next) => {
 
 
 module.exports.create = (req, res, next) => {
-    const { body, image} = req.body ? req.body : "";
+    const { body } = req.body ? req.body : "";
+    console.log('Testing this: ', req.file)
+    const image = req.file ? req.file.path : undefined;
     const userId = req.session.user.id;
 
     if (!body) throw createError(400, 'Post text is mandatory')
@@ -74,20 +76,22 @@ module.exports.create = (req, res, next) => {
 }
 
 
-module.exports.edit = (req, res, next) => {}
-
-
 module.exports.update = (req, res, next) => {
+
     Post.findById( req.params.id )
         .then( p => {
-            if (p.user !== req.session.user.id) throw createError(403, 'you can only edit your own posts')
 
-            const params  = {};
-            if (req.body.body) params.body = req.body.body
-            if (req.body.image) params.image = req.body.image
+            if (p.user.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own posts')
 
-            if (params) {
-                Post.findByIdAndUpdate( req.params.id, params, {
+            const { body } = req.body;
+
+            if (req.file) {
+                params.image = req.file.path;
+            } 
+
+            if (body) {
+                console.log(body)
+                Post.findByIdAndUpdate( req.params.id, { body }, {
                     runValidators: true,
                     new: true
                 })
