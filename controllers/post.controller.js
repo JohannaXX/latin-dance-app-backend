@@ -113,15 +113,8 @@ module.exports.delete = (req, res, next) => {
 }
 
 
-module.exports.deleteComment = (req, res, next) => {
-    Comment.findByIdAndDelete( req.params.id )
-        .then(() => res.status(204).json()) 
-        .catch(next)
-}
-
-
 module.exports.addComment = (req, res, next) => {
-    const { text } = req.body;
+    const text = req.body.body;
     const user = req.session.user.id;
     const post = req.params.id;
 
@@ -132,6 +125,52 @@ module.exports.addComment = (req, res, next) => {
     comment.save()
         .then( c => res.status(201).json(c) )
         .catch(next)
+}
+
+
+module.exports.updateComment = (req, res, next) => {
+
+    Comment.findById(req.params.id)
+        .then( c => {
+            const text = req.body.body;
+
+            if (c.user.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own comments')
+
+            Comment.findByIdAndUpdate( req.params.id, { text }, {
+                runValidators: true,
+                new: true
+            })
+                .then( c => res.status(200).json(c))
+                .catch(next)
+
+
+        })
+        .catch(next)
+
+}
+
+
+module.exports.deleteComment = (req, res, next) => {
+    /* Comment.findByIdAndDelete( req.params.id )
+        .then(() => res.status(204).json()) 
+        .catch(next) */
+
+    Comment.findById(req.params.id)
+    .then( c => {
+        const text = '...comment cancelled';
+        
+        if (c.user.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own comments')
+
+        Comment.findByIdAndUpdate( req.params.id, { text }, {
+            runValidators: true,
+            new: true
+        })
+            .then( c => res.status(200).json(c))
+            .catch(next)
+
+
+    })
+    .catch(next)
 }
 
 
