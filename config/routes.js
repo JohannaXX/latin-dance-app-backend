@@ -33,7 +33,8 @@ router.post('/post', authMiddleware.isAuthenticated, upload.single('image'), pos
 
 router.get('/chats',  authMiddleware.isAuthenticated, chatController.index );
 router.post('/chat/:id/messages', authMiddleware.isAuthenticated, chatController.addMessage );
-router.delete('/chat/:id/delete', authMiddleware.isAuthenticated, chatController.delete);
+router.delete('/chat/message/:id/delete', authMiddleware.isAuthenticated, chatController.deleteMessage);
+router.patch('/chat/message/:id/edit', authMiddleware.isAuthenticated, chatController.updateMessage);
 router.get('/chat/:id', authMiddleware.isAuthenticated, chatController.show);
 router.post('/chat', authMiddleware.isAuthenticated, chatController.create);
 

@@ -43,8 +43,7 @@ module.exports.show = (req, res, next) => {
                 sort: {
                     createdAt: -1
                 }
-            }/* ,
-            populate: 'sender' */
+            }
         })
         .then( chat => {
             if (!chat) {
@@ -96,15 +95,42 @@ module.exports.addMessage = (req, res, next) => {
         .catch(next)
 }
 
+module.exports.updateMessage = (req, res, next) => {
+    Message.findById( req.params.id )
+        .then( m => {
 
-module.exports.delete = (req, res, next) => {
-    Promise.all([
-        Message.deleteMany({ 'chat': req.params.id }),
-        Chat.findByIdAndDelete( req.params.id )
-    ])
-        .then(() => {
-            res.status(204).json();
+            if (m.sender.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own posts')
+
+            const message = req.body.message + ' (edited)';
+
+            if (message) {
+                Message.findByIdAndUpdate( req.params.id, { message }, {
+                    runValidators: true,
+                    new: true
+                })
+                    .then( m => res.status(200).json(m))
+                    .catch(next)
+            }
         })
-        .catch(next)
+}
+
+
+module.exports.deleteMessage = (req, res, next) => {
+    Message.findById( req.params.id )
+        .then( m => {
+
+            if (m.sender.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own posts')
+
+            const message = '...(message cancelled)';
+
+            if (message) {
+                Message.findByIdAndUpdate( req.params.id, { message }, {
+                    runValidators: true,
+                    new: true
+                })
+                    .then( m => res.status(204).json(m))
+                    .catch(next)
+            }
+        })
 }
 

@@ -6,6 +6,7 @@ const Like = require('../models/like.model');
 const Match = require('../models/match.model');
 
 module.exports.index = (req, res, next) => {
+
     Match.find({
         $or: [{
             users: {
@@ -90,7 +91,6 @@ module.exports.update = (req, res, next) => {
             } 
 
             if (body) {
-                console.log(body)
                 Post.findByIdAndUpdate( req.params.id, { body }, {
                     runValidators: true,
                     new: true
