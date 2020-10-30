@@ -80,11 +80,12 @@ module.exports.update = (req, res, next) => {
 }
 
 
-module.exports.edit = (req, res, next) => {}
-
-
 module.exports.profile = (req, res, next) => {
     User.findById( req.params.id )
+        .populate({
+            path: 'posts',
+            populate: ['likes', 'user']
+        })
         .populate({
             path: 'posts',
             options: {
@@ -92,10 +93,6 @@ module.exports.profile = (req, res, next) => {
                     createdAt: -1
                 }
             },
-            populate: ['likes', 'user']
-        })
-        .populate({
-            path: 'posts',
             populate: {
               path: 'comments',
               populate: {
