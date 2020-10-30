@@ -60,9 +60,16 @@ module.exports.delete = (req, res, next) => {
 }
 
 module.exports.update = (req, res, next) => {
-    const params = req.body;
 
-    if (req.file) params.avatar = req.file.path;
+    const params = JSON.parse(req.body.body);
+
+    if (params.id.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own profile')
+
+    if (req.file) {
+        params.avatar = req.file.path
+    };
+
+    delete params.id
 
     User.findByIdAndUpdate( req.session.user.id, params, {
             runValidators: true,
