@@ -11,7 +11,7 @@ const Message = require('../models/message.model');
 
 const userIds = [];
 
-const danceStyles = [ "salsa cubana", "salsa en linea", "bachata", "kizomba", "mambo", "merengue", "rumba"]
+const danceStyles = [ "salsa cubana", "salsa en linea", "bachata", "kizomba", "tango", "mambo", "merengue", "rumba"]
 
 Promise.all([
   User.deleteMany(),
@@ -27,7 +27,6 @@ Promise.all([
       const user = new User({
         name: faker.name.findName(),
         email: faker.internet.email(),
-        username: faker.internet.userName(),
         password: '123123123',
         avatar: faker.image.avatar(),
         bio: faker.lorem.sentence(),
@@ -95,7 +94,6 @@ Promise.all([
     const testProfile = new User({
         name: 'Test',
         email: 'test@test.com',
-        username: 'Test',
         password: 'Test1234',
         avatar: faker.image.avatar(),
         bio: faker.lorem.sentence(),

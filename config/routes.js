@@ -13,8 +13,8 @@ const upload = require('./cloudinary.config');
 router.post('/login', authMiddleware.isNotAuthenticated, userController.doLogin);
 router.post('/logout', authMiddleware.isAuthenticated, userController.logout);
 
-router.delete('/user/delete', authMiddleware.isAuthenticated, userController.delete);
 router.patch('/user/update', authMiddleware.isAuthenticated, upload.single('avatar'), userController.update);
+router.delete('/user/:id/delete', authMiddleware.isAuthenticated, userController.delete);
 router.get('/user/:id', authMiddleware.isAuthenticated, userController.profile);
 router.post('/user', authMiddleware.isNotAuthenticated, upload.single('avatar'), userController.create);
 

@@ -6,7 +6,6 @@ const Comment = require('../models/comment.model');
 const Like = require('../models/like.model');
 const Match = require('../models/match.model');
 
-module.exports.showSignup = (req, res, next) => {}
 module.exports.activateUser = (req, res, next) => {}
 module.exports.loginWithSlack = (req, res, next) => {}
 module.exports.loginWithGmail = (req, res, next) => {}
@@ -49,14 +48,19 @@ module.exports.logout = (req, res, next) => {
 module.exports.delete = (req, res, next) => {
     const userId = req.session.user.id;
 
-    Promise.all([
-        Comment.deleteMany({ 'user': userId }),
-        Like.deleteMany({ 'user': userId }),
-        Post.deleteMany({ 'user': userId }),
-        User.findByIdAndDelete( userId )
-    ])
-        .then(() => res.status(204).json())
-        .catch(next)
+    if (req.params.id === userId) {
+        Promise.all([
+            Comment.deleteMany({ 'user': userId }),
+            Like.deleteMany({ 'user': userId }),
+            Post.deleteMany({ 'user': userId }),
+            User.findByIdAndDelete( userId )
+        ])
+            .then(() => {
+                req.session.destroy();
+                res.status(204).json();
+            })
+            .catch(next)
+    }
 }
 
 module.exports.update = (req, res, next) => {
@@ -115,7 +119,6 @@ module.exports.create = (req, res, next) => {
     const user = new User({
         name: req.body.name,
         email: req.body.email,
-        username: req.body.username,
         password: req.body.password,
         avatar: req.file ? req.file.url : undefined,
         bio: req.body.bootcamp
