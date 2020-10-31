@@ -45,22 +45,21 @@ module.exports.logout = (req, res, next) => {
 }
 
 
-module.exports.delete = (req, res, next) => {
-    const userId = req.session.user.id;
+module.exports.create = (req, res, next) => {
+    const params = JSON.parse(req.body.body);
 
-    if (req.params.id === userId) {
-        Promise.all([
-            Comment.deleteMany({ 'user': userId }),
-            Like.deleteMany({ 'user': userId }),
-            Post.deleteMany({ 'user': userId }),
-            User.findByIdAndDelete( userId )
-        ])
-            .then(() => {
-                req.session.destroy();
-                res.status(204).json();
-            })
-            .catch(next)
-    }
+    if (req.file) {
+        params.avatar = req.file.path
+    };
+    console.log('Ha llegado')
+    console.log(params)
+
+    const user = new User(params)
+    
+    user.save()
+        .then( u => res.status(201).json(u))
+        .catch(next)
+
 }
 
 module.exports.update = (req, res, next) => {
@@ -81,6 +80,25 @@ module.exports.update = (req, res, next) => {
         })
         .then( u => res.status(200).json(u))
         .catch(err => next(err))
+}
+
+
+module.exports.delete = (req, res, next) => {
+    const userId = req.session.user.id;
+
+    if (req.params.id === userId) {
+        Promise.all([
+            Comment.deleteMany({ 'user': userId }),
+            Like.deleteMany({ 'user': userId }),
+            Post.deleteMany({ 'user': userId }),
+            User.findByIdAndDelete( userId )
+        ])
+            .then(() => {
+                req.session.destroy();
+                res.status(204).json();
+            })
+            .catch(next)
+    }
 }
 
 
@@ -112,22 +130,6 @@ module.exports.profile = (req, res, next) => {
             }
         }) 
         .catch(next)
-}
-
-
-module.exports.create = (req, res, next) => {
-    const user = new User({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        avatar: req.file ? req.file.url : undefined,
-        bio: req.body.bootcamp
-      })
-    
-      user.save()
-        .then( u => res.status(201).json(u))
-        .catch(next)
-
 }
 
 
