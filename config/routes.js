@@ -6,10 +6,10 @@ const chatController = require('../controllers/chat.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const upload = require('./cloudinary.config');
 
-// router.get('/activate/:token', authMiddleware.isNotAuthenticated, userController.activateUser);
-// router.get('/auth/slack', authMiddleware.isNotAuthenticated, userController.loginWithSlack);
-// router.get('/auth/google', authMiddleware.isNotAuthenticated, userController.loginWithGmail);
-// router.get('/auth/google/callback', authMiddleware.isNotAuthenticated, userController.getLoginWithGmail);
+router.get('/activation/:token', authMiddleware.isNotAuthenticated, userController.activation);
+router.get('/auth/slack', authMiddleware.isNotAuthenticated, userController.loginWithSlack);
+router.get('/auth/google', authMiddleware.isNotAuthenticated, userController.loginWithGmail);
+router.get('/auth/google/callback', authMiddleware.isNotAuthenticated, userController.getLoginWithGmail);
 router.post('/login', authMiddleware.isNotAuthenticated, userController.doLogin);
 router.post('/logout', authMiddleware.isAuthenticated, userController.logout);
 

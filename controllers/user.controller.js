@@ -1,16 +1,54 @@
 const createError = require('http-errors');
+const passport = require('passport');
 
 const User = require('../models/user.model');
 const Post = require('../models/post.model');
 const Comment = require('../models/comment.model');
 const Like = require('../models/like.model');
 const Match = require('../models/match.model');
+const nodemailer = require('../config/nodemailer.config');
 
-module.exports.activateUser = (req, res, next) => {}
-module.exports.loginWithSlack = (req, res, next) => {}
-module.exports.loginWithGmail = (req, res, next) => {}
-module.exports.getLoginWithGmail = (req, res, next) => {}
-module.exports.showLogin = (req, res, next) => {}
+
+module.exports.loginWithSlack = (req, res, next) => {
+    console.log('LOGIN WITH SLACK')
+    const passportSlackController = passport.authenticate('slack', (error, user) => {
+        if (error) {
+          console.log(error)
+        } else {
+            req.session.user = user;
+            res.redirect(`http://localhost:3001/setuser/${user._id}`);
+        }
+    })
+
+    passportSlackController(req, res, next);
+}
+
+
+module.exports.loginWithGmail = (req, res, next) => {
+    const passportGoogleLogin = passport.authenticate('google', {
+        scope: [
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email"
+        ]
+    })
+    passportGoogleLogin(req, res, next)
+}
+
+
+module.exports.getLoginWithGmail = (req, res, next) => {
+    const passportGoogleController = passport.authenticate('google', {
+        scope: ['profile', 'email']
+    }, (error, user) => {
+        if (error) {
+            next(error);
+        } else {
+            req.session.user = user;  
+            res.redirect(`http://localhost:3001/setuser/${user._id}`);
+        }
+    })
+    passportGoogleController(req, res, next)
+}
+
 
 module.exports.doLogin = (req, res, next) => {
     const { email, password } = req.body
@@ -26,11 +64,15 @@ module.exports.doLogin = (req, res, next) => {
             } else {
                 return user.checkPassword(password)
                     .then(match => {
-                        if (!match) {
-                            throw createError(400, 'user not found');
+                        if (match) {
+                            if (user.activation.active) {
+                                req.session.user = user;
+                                res.status(200).json(user)
+                            } else {
+                                throw createError(400, 'account not activated');
+                            }
                         } else {
-                            req.session.user = user;
-                            res.json(user)
+                            throw createError(400, 'user not found');
                         }
                     })
             }
@@ -51,16 +93,38 @@ module.exports.create = (req, res, next) => {
     if (req.file) {
         params.avatar = req.file.path
     };
-    console.log('Ha llegado')
-    console.log(params)
 
     const user = new User(params)
     
     user.save()
-        .then( u => res.status(201).json(u))
+        .then( u => {
+            nodemailer.sendValidationEmail(u.email, u.activation.token, u.name);
+            res.status(201).json({ message: 'Please check your e-mail for actvation'})
+        })
         .catch(next)
 
 }
+
+module.exports.activation = (req, res, next) => {
+    console.log('ACTIVATION')
+    User.findOne({ "activation.token": req.params.token })
+        .then(user => {
+            if (user) {
+                user.activation.active = true;
+                user.save()
+                    .then(() => {
+                        res.status(200).json({
+                            message: 'Your account has been activated. You can log in now.'
+                        })
+                    })
+                    .catch(next)
+            } else {
+                res.status(400).json({ message: 'Invalid link' })
+            }
+        })
+        .catch(next)
+}
+
 
 module.exports.update = (req, res, next) => {
 

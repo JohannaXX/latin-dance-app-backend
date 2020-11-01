@@ -4,11 +4,20 @@ const EMAIL_PATTERN = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\"
 const SALT_WORK_FACTOR = 10;
 require('./post.model');
 
+const generateRandomToken = () => {
+  const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let token = '';
+  for (let i = 0; i < 25; i++) {
+    token += characters[Math.floor(Math.random() * characters.length)];
+  }
+  return token;
+}
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Name is required'],
-    minlength: [3, 'Name needs at last 8 chars'],
+    minlength: [5, 'Name needs at last 5 chars'],
     trim: true
   },
   email: {
@@ -54,6 +63,16 @@ const userSchema = new mongoose.Schema({
   validated: {
     type: Boolean,
     default: true
+  },
+  activation: {
+    active: {
+      type: Boolean,
+      default: false
+    },
+    token: {
+      type: String,
+      default: generateRandomToken
+    }
   },
   social: {
     google: String,
