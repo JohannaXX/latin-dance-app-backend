@@ -7,6 +7,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const upload = require('./cloudinary.config');
 
 router.get('/activation/:token', authMiddleware.isNotAuthenticated, userController.activation);
+router.post('/facebook/login', authMiddleware.isNotAuthenticated, userController.loginWithFacebook);
 router.get('/auth/slack', authMiddleware.isNotAuthenticated, userController.loginWithSlack);
 router.get('/auth/google', authMiddleware.isNotAuthenticated, userController.loginWithGmail);
 router.get('/auth/google/callback', authMiddleware.isNotAuthenticated, userController.getLoginWithGmail);

@@ -22,8 +22,8 @@ const slack = new SlackStrategy(
                         avatar: profile.user.image_1024,
                         password: profile.provider + Math.random().toString(36).substring(8),
                         bio: '',
-                        city: 'my city',
-                        country: 'my country',
+                        city: 'city',
+                        country: 'country',
                         social: {
                             slack: profile.id,
                         },
@@ -65,8 +65,8 @@ const google = new GoogleStrategy(
                         email: profile.emails[0].value,
                         avatar: profile._json.picture,
                         password: profile.provider + Math.random().toString(36).substring(8),
-                        city: 'my city',
-                        country: 'my country',
+                        city: 'city',
+                        country: 'country',
                         social: {
                             google: profile.id,
                         },

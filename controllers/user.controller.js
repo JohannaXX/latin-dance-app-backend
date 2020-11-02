@@ -10,7 +10,6 @@ const nodemailer = require('../config/nodemailer.config');
 
 
 module.exports.loginWithSlack = (req, res, next) => {
-    console.log('LOGIN WITH SLACK')
     const passportSlackController = passport.authenticate('slack', (error, user) => {
         if (error) {
           console.log(error)
@@ -47,6 +46,44 @@ module.exports.getLoginWithGmail = (req, res, next) => {
         }
     })
     passportGoogleController(req, res, next)
+}
+
+module.exports.loginWithFacebook = (req, res, next) => {
+   const fbUser = req.body;
+
+   User.findOne({ "email": fbUser.email })
+            .then((user) => {
+                if (user) {
+                    req.session.user = user;  
+                    res.redirect(`http://localhost:3001/setuser/${user.id}`);
+                } else {
+                    const newUser = new User({
+                        name: fbUser.name,
+                        email: fbUser.email,
+                        avatar: fbUser.picture.data.url,
+                        password: fbUser.expiresIn + Math.random().toString(36).substring(7),
+                        bio: '',
+                        city: 'city',
+                        country: 'country',
+                        social: {
+                            facebook: fbUser.id,
+                        },
+                        activation: {
+                            active: true
+                        }
+                    });
+
+                    newUser
+                        .save()
+                        .then((u) => {
+                            console.log(u)
+                            req.session.user = u;  
+                            res.redirect(`http://localhost:3001/setuser/${u._id}`);
+                        })
+                        .catch((err) => next(err));
+                }
+            })
+            .catch((err) => next(err));
 }
 
 
