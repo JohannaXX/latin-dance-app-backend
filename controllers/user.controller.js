@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const passport = require('passport');
+const axios = require('axios');
 
 const User = require('../models/user.model');
 const Post = require('../models/post.model');
@@ -55,7 +56,7 @@ module.exports.loginWithFacebook = (req, res, next) => {
             .then((user) => {
                 if (user) {
                     req.session.user = user;  
-                    res.redirect(`http://localhost:3001/setuser/${user.id}`);
+                    res.json(user);
                 } else {
                     const newUser = new User({
                         name: fbUser.name,
@@ -78,7 +79,7 @@ module.exports.loginWithFacebook = (req, res, next) => {
                         .then((u) => {
                             console.log(u)
                             req.session.user = u;  
-                            res.redirect(`http://localhost:3001/setuser/${u._id}`);
+                            res.json(user);
                         })
                         .catch((err) => next(err));
                 }
@@ -121,6 +122,7 @@ module.exports.doLogin = (req, res, next) => {
 module.exports.logout = (req, res, next) => {
     req.session.destroy();
     res.status(204).json();
+    console.log(req.session)
 }
 
 
@@ -206,6 +208,14 @@ module.exports.delete = (req, res, next) => {
 module.exports.profile = (req, res, next) => {
     User.findById( req.params.id )
         .populate({
+            path: 'photos',
+            options: {
+                sort: {
+                    createdAt: -1
+                }
+            }
+        })
+        .populate({
             path: 'posts',
             populate: ['likes', 'user']
         })
@@ -235,23 +245,51 @@ module.exports.profile = (req, res, next) => {
 
 
 module.exports.network = (req, res, next) => {
-    Match.find({ 'users': { $in: [req.currentUser.id] } })
-        .populate({path: 'users', match: {'_id': {$ne: req.session.user.id}}})
-        .then(matches => {
+    User.findById(req.currentUser.id)
+        .then( me => {
 
-            const matchIds = matches.reduce((acc, cur) => {
-                acc.push(cur.users[0], cur.users[1])
-                return acc
-            }, []);
+            Match.find({ 'users': { $in: [req.currentUser.id] } })
+                .populate({path: 'users', match: {'_id': {$ne: req.session.user.id}}})
+                .then(matches => {
 
-            User.find().where('_id').nin(matchIds)
-                .populate('matches')
-                .then(users => {
-                    res.status(200).json({users})
+                    const matchIds = matches.reduce((acc, cur) => {
+                        acc.push(cur.users[0], cur.users[1])
+                        return acc
+                    }, []);
+
+                    User.find().where('_id').nin([ ...matchIds, req.currentUser.id ])
+                        .sort({
+                            createdAt: -1
+                        })
+                        .populate('matches')
+                        .then(users => {
+
+                            const cityMatches = [];
+                            const countryMatches = [];
+                            const rest = [];
+
+                            users.forEach( u => {
+                                if ( u.style.some( d => me.style.includes(d))) {
+                                    if (u.city === me.city) {
+                                        cityMatches.push(u)
+                                    } else if (u.country === me.country) {
+                                        countryMatches.push(u)
+                                    } else {
+                                        rest.push(u)
+                                    }
+                                }
+                            })
+
+                            const orderedUsers = [ ...cityMatches, ...countryMatches, ...rest];
+                            console.log( orderedUsers ) 
+                            res.status(200).json({ orderedUsers })
+                        })
+                        .catch(next)
                 })
                 .catch(next)
         })
         .catch(next)
+    
 }
 
 

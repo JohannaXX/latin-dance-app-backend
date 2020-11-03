@@ -39,9 +39,6 @@ const userSchema = new mongoose.Schema({
   bio: {
     type: String
   },
-  gallery: {
-    type: [ String ]
-  },
   style: {
     type: [ String ],
     enum: [ 'salsa cubana', 'salsa en linea', 'bachata', 'kizomba', 'mambo', 'merengue', 'rumba'],
@@ -117,6 +114,13 @@ userSchema.methods.checkPassword = function (password) {
 
 userSchema.virtual('posts', {
   ref: 'Post',
+  localField: '_id',
+  foreignField: 'user',
+  justOne: false,
+});
+
+userSchema.virtual('photos', {
+  ref: 'Photo',
   localField: '_id',
   foreignField: 'user',
   justOne: false,

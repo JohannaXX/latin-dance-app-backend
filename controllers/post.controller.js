@@ -4,6 +4,8 @@ const Post = require('../models/post.model');
 const Comment = require('../models/comment.model');
 const Like = require('../models/like.model');
 const Match = require('../models/match.model');
+const User = require('../models/user.model');
+const Photo = require('../models/photo.model');
 
 module.exports.index = (req, res, next) => {
 
@@ -62,11 +64,20 @@ module.exports.show = (req, res, next) => {
 
 module.exports.create = (req, res, next) => {
     const { body } = req.body ? req.body : "";
-    console.log('Testing this: ', req.file)
     const image = req.file ? req.file.path : undefined;
     const userId = req.session.user.id;
 
-    if (!body) throw createError(400, 'Post text is mandatory')
+    if (!body) throw createError(400, 'Post text is mandatory');
+
+    if (image) {
+        const photo = new Photo({
+            user: userId,
+            photo: image
+        })
+
+        photo.save()
+            .then(ph => console.log(ph))
+    }
 
     const post = new Post({ body, image, user: userId })
 
@@ -103,7 +114,9 @@ module.exports.update = (req, res, next) => {
 
 
 module.exports.delete = (req, res, next) => {
+
     Promise.all([
+        Photo.findOneAndDelete({'photo': req.body.body}),
         Comment.deleteMany({ 'post': req.params.id }),
         Like.deleteMany({ 'post': req.params.id }),
         Post.findByIdAndDelete( req.params.id )
@@ -123,7 +136,9 @@ module.exports.addComment = (req, res, next) => {
     const comment = new Comment({ text, user, post })
 
     comment.save()
-        .then( c => res.status(201).json(c) )
+        .then( c => {
+            res.status(201).json(comment) 
+        })
         .catch(next)
 }
 

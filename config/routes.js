@@ -27,7 +27,7 @@ router.post('/match', authMiddleware.isAuthenticated, userController.createMatch
 router.delete('/post/comment/:id/delete', authMiddleware.isAuthenticated, postController.deleteComment);
 router.patch('/post/comment/:id/update', authMiddleware.isAuthenticated, postController.updateComment);
 router.post('/post/:id/comments', authMiddleware.isAuthenticated, postController.addComment);
-router.delete('/post/:id', authMiddleware.isAuthenticated, postController.delete);
+router.post('/post/:id/delete', authMiddleware.isAuthenticated, postController.delete);
 router.get('/post/:id/like', authMiddleware.isAuthenticated, postController.like);
 router.patch('/post/:id/update', authMiddleware.isAuthenticated, postController.update);
 router.get('/post/:id', authMiddleware.isAuthenticated, postController.show);
