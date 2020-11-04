@@ -166,22 +166,30 @@ module.exports.activation = (req, res, next) => {
 
 
 module.exports.update = (req, res, next) => {
+    const data = JSON.parse(req.body.body);
 
-    const params = JSON.parse(req.body.body);
+    if (data.id.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own profile')
 
-    if (params.id.toString() !== req.session.user.id) throw createError(403, 'you can only edit your own profile')
+    const params = {
+        name: data.name,
+        bio: data.bio,
+        city: data.city,
+        country: data.country,
+        style: data.danceStyles
+    }
 
     if (req.file) {
         params.avatar = req.file.path
     };
 
-    delete params.id
-
     User.findByIdAndUpdate( req.session.user.id, params, {
             runValidators: true,
             new: true
         })
-        .then( u => res.status(200).json(u))
+        .then( u => {
+            //console.log(u)
+            res.status(200).json(u)
+        })
         .catch(err => next(err))
 }
 

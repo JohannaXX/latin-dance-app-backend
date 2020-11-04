@@ -26,7 +26,6 @@ module.exports.index = (req, res, next) => {
             Match.find({'users': { $in: [req.session.user.id]}, status: 'accepted'}).where('users').nin(userIdsWithActiveChats)
                 .populate({path: 'users', match: {'_id': {$ne: req.session.user.id}}})
                 .then( matches => {
-
                     res.status(200).json({chats, matchesWithoutActiveChat: matches})
                 }) 
         })
