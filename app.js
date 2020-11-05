@@ -16,6 +16,11 @@ const cors = require('./config/cors.config')
  * Configure express
  */
 const app = express();
+
+//for deplayment:
+app.set('trust proxy', 1)
+
+
 app.use(cors)
 app.use(logger('dev'));
 app.use(express.json());
