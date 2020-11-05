@@ -11,10 +11,52 @@ const Message = require('../models/message.model');
 const Photo = require('../models/photo.model');
 
 const userIds = [];
-const cities = ['Madrid', 'Rome', 'Paris'];
-const countries = ['ES', 'IT', 'FR'];
 
-const danceStyles = ["salsa cubana", "salsa en linea", "bachata", "kizomba", "mambo", "merengue", "rumba"]
+const danceStyles = ["Salsa cubana", "Salsa en línea", "Bachata", "Kizomba", "Reggaeton", "Cumbia", "Merengue", "Cha-cha-chá"];
+
+const cityAndCountry = [
+    [ 'ES', 'Madrid' ],
+    [ 'ES', 'Madrid' ],
+    [ 'ES', 'Alicante' ],
+    [ 'ES', 'Valencia' ],
+    [ 'IT', 'Roma' ],
+    [ 'IT', 'Firenze' ],
+    [ 'FR', 'Paris' ]
+]
+
+const names = [
+    [ "Leonardo Vázquez" , "https://s3.amazonaws.com/uifaces/faces/twitter/juangomezw/128.jpg" ],
+    [ "Diego González" , "https://s3.amazonaws.com/uifaces/faces/twitter/moynihan/128.jpg" ],
+    [ "Giovanni Bianchi", "https://s3.amazonaws.com/uifaces/faces/twitter/kiwiupover/128.jpg" ],
+    [ "Carlos Martinez" , "https://s3.amazonaws.com/uifaces/faces/twitter/necodymiconer/128.jpg" ],
+    [ "Enrique Rodríguez" , "https://s3.amazonaws.com/uifaces/faces/twitter/peejfancher/128.jpg" ],
+    [ "Emiliano Pérez" , "https://s3.amazonaws.com/uifaces/faces/twitter/codepoet_ru/128.jpg" ],
+    [ "Matias García", "https://s3.amazonaws.com/uifaces/faces/twitter/Skyhartman/128.jpg" ],
+    [ "Javier Hernández", "https://s3.amazonaws.com/uifaces/faces/twitter/ismail_biltagi/128.jpg" ],
+    [ "Danilo Rossi" , "https://s3.amazonaws.com/uifaces/faces/twitter/stalewine/128.jpg" ],
+    [ "Matteo Valla", "https://s3.amazonaws.com/uifaces/faces/twitter/naitanamoreno/128.jpg" ],
+    [ "Jean-Paul Bernard", "https://s3.amazonaws.com/uifaces/faces/twitter/tanveerrao/128.jpg" ],
+    [ "Jules Richard", "https://s3.amazonaws.com/uifaces/faces/twitter/ajaxy_ru/128.jpg" ],
+    [ "Louis Martin", "https://s3.amazonaws.com/uifaces/faces/twitter/anaami/128.jpg" ],
+    [ "Antonio Esposito", "https://s3.amazonaws.com/uifaces/faces/twitter/marcusgorillius/128.jpg" ],
+    [ "Jorge Sánchez", "https://s3.amazonaws.com/uifaces/faces/twitter/nilshelmersson/128.jpg" ],
+    [ "Francisco Jiménez", "https://s3.amazonaws.com/uifaces/faces/twitter/themadray/128.jpg" ],
+    [ "Manuel Gutiérrez", "https://s3.amazonaws.com/uifaces/faces/twitter/vladarbatov/128.jpg" ],
+    [ "Mario Torres", "https://s3.amazonaws.com/uifaces/faces/twitter/dorphern/128.jpg" ],
+    [ "Ricardo Alonso", "https://s3.amazonaws.com/uifaces/faces/twitter/coreyhaggard/128.jpg" ],
+    [ "Sergio Álvarez", "https://s3.amazonaws.com/uifaces/faces/twitter/smenov/128.jpg" ],
+    [ "Marco Sanz", "https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg" ],
+    [ "Alejandro Castro", "https://s3.amazonaws.com/uifaces/faces/twitter/_dwite_/128.jpg" ],
+    [ "Francesco Romano", "https://s3.amazonaws.com/uifaces/faces/twitter/heycamtaylor/128.jpg" ],
+    [ "Lucas Robert", "https://s3.amazonaws.com/uifaces/faces/twitter/adamnac/128.jpg" ],
+    [ "Armando Morales", "https://s3.amazonaws.com/uifaces/faces/twitter/kapaluccio/128.jpg" ],
+    [ "Guillermo Ortíz", "https://s3.amazonaws.com/uifaces/faces/twitter/knilob/128.jpg" ],
+    [ "Alberto Ramírez", "https://s3.amazonaws.com/uifaces/faces/twitter/vikashpathak18/128.jpg" ],
+    [ "Raúl Moreno", "https://s3.amazonaws.com/uifaces/faces/twitter/reideiredale/128.jpg" ],
+    [ "Ernesto Domínguez", "https://s3.amazonaws.com/uifaces/faces/twitter/nckjrvs/128.jpg" ],
+    [ "Martín Córdoba", "https://s3.amazonaws.com/uifaces/faces/twitter/nckjrvs/128.jpg" ]
+]
+
 
 Promise.all([
     User.deleteMany(),
@@ -28,12 +70,20 @@ Promise.all([
 ])
     .then(() => {
         for (let i = 0; i < 30; i++) {
+            const radomNum = Math.floor(Math.random() * cityAndCountry.length);
+
+            const randomDanceNum = Math.floor(Math.random() * danceStyles.length);
+            const dances = [ 
+                danceStyles[randomDanceNum ],
+                danceStyles[randomDanceNum -1]
+            ];
+
             const user = new User({
-                name: faker.name.findName(),
+                name: names[i][0],
                 email: faker.internet.email(),
                 password: '123123123',
-                avatar: faker.image.avatar(),
-                bio: faker.lorem.sentence(),
+                avatar: names[i][1],
+                bio: faker.lorem.sentences(),
                 gallery: [
                     "https://picsum.photos/300/300",
                     "https://picsum.photos/400/300",
@@ -44,12 +94,9 @@ Promise.all([
                     "https://picsum.photos/300/200",
                     "https://picsum.photos/400/400",
                 ],
-                style: [
-                    'salsa cubana',
-                    danceStyles[Math.floor(Math.random() * danceStyles.length)],
-                ],
-                city: cities[Math.floor(Math.random() * cities.length)],
-                country: countries[Math.floor(Math.random() * countries.length)],
+                style: dances,
+                city: cityAndCountry[radomNum][1],
+                country: cityAndCountry[radomNum][0],
                 role: 'user',
                 validated: true,
                 createdAt: faker.date.past()
@@ -57,7 +104,6 @@ Promise.all([
 
             user.save()
                 .then(u => {
-
                     userIds.push(u._id)
 
                     for (let j = 0; j < 5; j++) {
@@ -109,7 +155,7 @@ Promise.all([
             name: 'Test',
             email: 'test@test.com',
             password: 'Test1234',
-            avatar: faker.image.avatar(),
+            avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/hanna_smi/128.jpg',
             bio: faker.lorem.sentence(),
             gallery: [
                 "https://picsum.photos/300/300",
@@ -121,7 +167,7 @@ Promise.all([
                 "https://picsum.photos/300/200",
                 "https://picsum.photos/400/400",
             ],
-            style: ['salsa cubana', 'bachata'],
+            style: ['Salsa cubana', 'Bachata'],
             city: 'Madrid',
             country: 'ES',
             role: 'user',
