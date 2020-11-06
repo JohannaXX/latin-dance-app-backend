@@ -11,12 +11,14 @@ const nodemailer = require('../config/nodemailer.config');
 
 
 module.exports.loginWithSlack = (req, res, next) => {
+    debugger
+    
     const passportSlackController = passport.authenticate('slack', (error, user) => {
         if (error) {
           console.log(error)
         } else {
             req.session.user = user;
-            res.redirect(`http://localhost:3001/setuser/${user._id}`);
+            res.redirect(`https://latin-dance-app.herokuapp.com/setuser/${user._id}`);
         }
     })
 
@@ -25,6 +27,8 @@ module.exports.loginWithSlack = (req, res, next) => {
 
 
 module.exports.loginWithGmail = (req, res, next) => {
+    console.log('Login with Gmail reached');
+
     const passportGoogleLogin = passport.authenticate('google', {
         scope: [
             "https://www.googleapis.com/auth/userinfo.profile",
@@ -43,7 +47,7 @@ module.exports.getLoginWithGmail = (req, res, next) => {
             next(error);
         } else {
             req.session.user = user;  
-            res.redirect(`http://localhost:3001/setuser/${user._id}`);
+            res.redirect(`https://latin-dance-app.herokuapp.com/setuser/${user._id}`);
         }
     })
     passportGoogleController(req, res, next)
