@@ -273,7 +273,7 @@ Promise.all([
                         .catch(err => console.log(err))
                 }
 
-
+                console.log('Finished.')
 
             })
 
