@@ -5,7 +5,7 @@ const SESSION_MAX_AGE_SECONDS = Number(process.env.SESSION_MAX_AGE_SECONDS) || 6
 
 module.exports = session({
   secret: process.env.SESSION_SECRET || 'ultra secret',
-  /* resave: true, */
+  resave: true,
   saveUninitialized: false,
   cookie: {
     secure: process.env.SESSION_SECURE || false,

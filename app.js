@@ -15,6 +15,9 @@ const cors = require('./config/cors.config')
 /**
  * Configure express
  */
+
+console.log(process.env.PORT)
+
 const app = express();
 
 if  (app.get('env') === 'production') {
@@ -41,7 +44,7 @@ app.use((req, _, next) => {
  * Configure routes
  */
 const router = require('./config/routes.js');
-app.use('/', router);
+app.use('https://latin-dance-app-backend.herokuapp.com/', router);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -76,7 +79,7 @@ app.use(function (error, req, res, next) {
 /** 
  * Listen on provided port
  */
-const port = normalizePort(process.env.PORT /* || '3000' */);
+const port = normalizePort(process.env.PORT || '3000');
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
@@ -86,6 +89,7 @@ app.listen(port, () => {
 /**
  * Normalize a port into a number, string, or false.
  */
+
 function normalizePort(val) {
   const port = parseInt(val, 10);
 
