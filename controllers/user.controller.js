@@ -11,14 +11,12 @@ const nodemailer = require('../config/nodemailer.config');
 
 
 module.exports.loginWithSlack = (req, res, next) => {
-    debugger
-    
     const passportSlackController = passport.authenticate('slack', (error, user) => {
         if (error) {
-          console.log(error)
+            next(error)
         } else {
             req.session.user = user;
-            res.redirect(`https://latin-dance-app.herokuapp.com/setuser/${user._id}`);
+            res.json(user)
         }
     })
 
