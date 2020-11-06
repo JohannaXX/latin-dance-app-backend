@@ -25,8 +25,9 @@ module.exports.loginWithSlack = (req, res, next) => {
 
 
 module.exports.loginWithGmail = (req, res, next) => {
-    console.log('Login with Gmail reached');
-
+    console.log('AAAA')
+    console.log(req.body)
+    console.log(req.params)
     const passportGoogleLogin = passport.authenticate('google', {
         scope: [
             "https://www.googleapis.com/auth/userinfo.profile",
@@ -38,6 +39,10 @@ module.exports.loginWithGmail = (req, res, next) => {
 
 
 module.exports.getLoginWithGmail = (req, res, next) => {
+    console.log('BBBB')
+    console.log(req.body)
+    console.log(req.params)
+
     const passportGoogleController = passport.authenticate('google', {
         scope: ['profile', 'email']
     }, (error, user) => {
@@ -45,7 +50,7 @@ module.exports.getLoginWithGmail = (req, res, next) => {
             next(error);
         } else {
             req.session.user = user;  
-            res.redirect(`https://latin-dance-app.herokuapp.com/setuser/${user._id}`);
+            res.json(user);
         }
     })
     passportGoogleController(req, res, next)
