@@ -8,7 +8,10 @@ const User = require('../models/user.model');
 const Photo = require('../models/photo.model');
 
 module.exports.test = (req, res) => {
-    res.json({'message': 'holaaaaaa'});
+    User.find()
+        .then(users => {
+            res.json(users);
+        })
 }
 
 module.exports.index = (req, res, next) => {
