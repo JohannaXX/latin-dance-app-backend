@@ -40,7 +40,7 @@ router.patch('/chat/message/:id/edit', authMiddleware.isAuthenticated, chatContr
 router.get('/chat/:id', authMiddleware.isAuthenticated, chatController.show);
 router.post('/chat', authMiddleware.isAuthenticated, chatController.create);
 
-router.get('/', /* authMiddleware.isAuthenticated,  */postController.index);
+router.get('/', authMiddleware.isAuthenticated,  postController.index);
 
 
 module.exports = router;
