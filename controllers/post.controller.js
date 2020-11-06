@@ -9,8 +9,10 @@ const Photo = require('../models/photo.model');
 
 
 module.exports.index = (req, res, next) => {
-
-    Match.find({
+    Post.find( posts => {
+        res.json(posts)
+    })
+    /* Match.find({
         $or: [{
             users: {
                 $in: [req.currentUser.id]
@@ -46,7 +48,7 @@ module.exports.index = (req, res, next) => {
                 })
                 .catch(next)
     })
-    .catch(next)
+    .catch(next) */
 }
 
 
