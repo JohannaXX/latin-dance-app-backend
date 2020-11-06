@@ -7,6 +7,10 @@ const Match = require('../models/match.model');
 const User = require('../models/user.model');
 const Photo = require('../models/photo.model');
 
+module.exports.test = (req, res) => {
+    res.json({'message': 'holaaaaaa'});
+}
+
 module.exports.index = (req, res, next) => {
 
     Match.find({
