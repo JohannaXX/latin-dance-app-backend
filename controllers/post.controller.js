@@ -7,12 +7,6 @@ const Match = require('../models/match.model');
 const User = require('../models/user.model');
 const Photo = require('../models/photo.model');
 
-module.exports.test = (req, res) => {
-    User.find()
-        .then(users => {
-            res.json(users);
-        })
-}
 
 module.exports.index = (req, res, next) => {
 
