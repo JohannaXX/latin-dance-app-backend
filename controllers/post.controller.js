@@ -9,7 +9,8 @@ const Photo = require('../models/photo.model');
 
 
 module.exports.index = (req, res, next) => {
-    Post.find( posts => {
+    Post.find() 
+        .then( posts => {
         res.json(posts)
     })
     /* Match.find({
