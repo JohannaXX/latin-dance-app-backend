@@ -50,8 +50,7 @@ const google = new GoogleStrategy(
     {
         clientID: process.env.GMAIL_CLIENT_ID,
         clientSecret: process.env.GMAIL_CLIENT_SECRET,
-        //callbackURL: "/auth/google/callback"
-        callbackURL: "https://latin-dance-app.herokuapp.com/social-google/cb"
+        callbackURL: "/auth/google/callback"
     },
 
     (accessToken, refreshToken, profile, next) => {
